@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="kr">
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>넌센스 Quiz 맞추기</h1>
+        <p>5문제 - 중복있음</p>
+        <h3><a href="" id="start">시작</a></h3>
+
+        <h3 id="quiz"></h3>
+        <!--form을 사용하게 되면 submit 이벤트 사용가능-->
+        <form id="input_form" style="display: none;">
+            <!--Jquery의 show,hide 사용을 위해 display : none-->
+            <input type="text">
+        </form>
+        <p id="score"></p>
+
+        <script>
+            //사용되는 변수들
+            let score = 0;
+            let count = 0;
+            let randomnum = 0;
+            const quizArray = [
+                    {quiz:"왕이 넘어지면?", answer:"킹콩"},
+                    {quiz:"흑인이 싸면?", answer:"깜찍"},
+                    {quiz:"응애", answer:"응애"},
+                    {quiz:"외안됨", answer:"외안됨"},
+                    {quiz:"야발", answer:"야발"}
+            ];
+
+            function randomQuiz(){
+                randomnum = Math.floor( Math.random()*quizArray.length );
+                $("#quiz").text(quizArray[randomnum].quiz);
+            }
+
+            //시작을 눌렀을때 입력란 보이기
+            $("#start").on("click", function(e){
+                e.preventDefault();
+                $("#input_form").hide().slideDown(300);
+                $("#input_form").children().focus();
+                $("#score").text("");
+                
+                //시작버튼을 눌렀을때 출력되는 문제
+                randomQuiz();
+            });
+
+            //submit이벤트 발생시 input값 비교
+            $("#input_form").on("submit", function(e){
+                //새로고침 막기
+                e.preventDefault();
+                //랜덤퀴즈의 답을 가지고 옴
+                const answer = quizArray[randomnum].answer;
+                const user = $("#input_form").children().first().val(); // == .prop("value")
+                count++;
+                randomQuiz();
+                $("#input_form").children().first().val("");
+
+                if(user == answer){
+                    score++;
+                    $("#score").text(`${score}점`);
+                }
+                else if(user != answer){
+                    $("#score").text("오답입니다.");
+                }
+                if(count == 5){
+                    $("#input_form").hide();
+                    $("#quiz").text("");
+                    $("#score").text(`${score}점 입니다. 축하드립니다.`);
+                    count = 0;
+                    score = 0;
+                }
+            });
+        </script>
+    </body>
+</html>
